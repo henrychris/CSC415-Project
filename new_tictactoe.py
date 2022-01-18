@@ -1,9 +1,14 @@
 from shutil import move
+from traceback import print_tb
 import numpy as np
 
 # --- Global Variables ---
 game_is_still_on = True
 moves_made = 0
+
+# --- Constants ---
+MAX = 1000
+MIN = -1000
 
 # who won?
 winner = None
@@ -13,7 +18,7 @@ current_player = "X"
 
 # Game board
 board = [
-         "-", "-", "-", "-",
+    "-", "-", "-", "-",
          "-", "-", "-", "-",
          "-", "-", "-", "-",
          "-", "-", "-", "-"
@@ -21,10 +26,10 @@ board = [
 
 # board for testing evaluation functions
 test_board = [
-         "X", "-", "-", "-",
+    "X", "O", "O", "-",
          "-", "X", "-", "-",
          "-", "-", "X", "-",
-         "-", "-", "-", "X"
+         "-", "-", "-", "-"
 ]
 
 
@@ -197,7 +202,6 @@ def handle_turn(player):
     board[position] = player
     show_board()
 
-# change check winner function to require board
 
 def evaluate(board):
     if check_win(board) == "X":
@@ -208,5 +212,70 @@ def evaluate(board):
         return 0
 
 
-print(evaluate(test_board))
+def find_best_move(board):
+    best = MIN
+    best_move = -1
+
+    for i in range(16):
+        if board[i] == "-":
+            board[i] = "X"
+
+            move_val = minimax(board, 0, False)
+
+            board[i] = "-"
+
+            if (move_val > best):
+                best_move = i
+                best = move_val
+
+    return best_move
+
+
+def minimax(board, depth, is_max):
+    score = evaluate(board)
+
+    # X wins
+    if score == 10:
+        return score
+    # O wins
+    if score == -10:
+        return score
+    # Tie
+    if score == 0:
+        return score
+
+    if is_max:
+        best = MIN
+        for i in range(16):
+
+            if board[i] == "-":
+                board[i] = "X"
+
+                best = max(best, minimax(board, depth + 1, not is_max))
+
+                board[i] = "-"
+        return best
+    else:
+        best = MAX
+
+        for i in range(16):
+
+            if board[i] == "-":
+                board[i] = "O"
+
+                best = min(best, minimax(board, depth+1, not is_max))
+
+                board[i] = "-"
+        return best
+
+
+def is_moves_left(board):
+    for i in range(16):
+        if board[i] == "-":
+            return True
+    return False
+
+
+# print(evaluate(test_board))
+print("Best Move: ", find_best_move(test_board))
 # play_game()
