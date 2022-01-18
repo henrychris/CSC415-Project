@@ -13,10 +13,18 @@ current_player = "X"
 
 # Game board
 board = [
-    "-", "-", "-", "-",
+         "-", "-", "-", "-",
          "-", "-", "-", "-",
          "-", "-", "-", "-",
          "-", "-", "-", "-"
+]
+
+# board for testing evaluation functions
+test_board = [
+         "X", "-", "-", "-",
+         "-", "X", "-", "-",
+         "-", "-", "X", "-",
+         "-", "-", "-", "X"
 ]
 
 
@@ -53,38 +61,40 @@ def play_game():
 
 
 def check_if_game_over():
-    check_win()
-    check_tie()
+    check_win(board)
+    check_tie(board)
 
 
-def check_win():
+def check_win(board):
     # set global variables
     global winner
 
     # check_rows()
-    row_winner = check_rows()
+    row_winner = check_rows(board)
 
     # check_columns()
-    column_winner = check_columns()
+    column_winner = check_columns(board)
 
     # check_diagonals()
-    diagonals_winner = check_diagonals()
+    diagonals_winner = check_diagonals(board)
 
     if row_winner:
         winner = row_winner
+        return winner
 
     elif column_winner:
         winner = column_winner
+        return winner
 
     elif diagonals_winner:
         winner = diagonals_winner
+        return winner
     else:
         winner = None
+        return winner
 
-    return
 
-
-def check_rows():
+def check_rows(board):
     global game_is_still_on
 
     # check if any rows sum up to a winning value
@@ -105,10 +115,9 @@ def check_rows():
         return board[8]
     elif row_4:
         return board[12]
-    return
 
 
-def check_columns():
+def check_columns(board):
     global game_is_still_on
 
     # check if any columns sum up to a winning value
@@ -129,10 +138,9 @@ def check_columns():
         return board[2]
     elif column_4:
         return board[3]
-    return
 
 
-def check_diagonals():
+def check_diagonals(board):
     global game_is_still_on
 
     # check if any diagonals sum up to a winning value
@@ -147,10 +155,9 @@ def check_diagonals():
         return board[0]
     elif diagonal_2:
         return board[3]
-    return
 
 
-def check_tie():
+def check_tie(board):
     global game_is_still_on
 
     if "-" not in board:
@@ -190,5 +197,16 @@ def handle_turn(player):
     board[position] = player
     show_board()
 
+# change check winner function to require board
 
-play_game()
+def evaluate(board):
+    if check_win(board) == "X":
+        return 10
+    if check_win(board) == "O":
+        return -10
+    if check_win(board) == None:
+        return 0
+
+
+print(evaluate(test_board))
+# play_game()
