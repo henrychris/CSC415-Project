@@ -26,9 +26,9 @@ board = [
 
 # board for testing evaluation functions
 test_board = [
-    "X", "O", "O", "-",
-         "-", "X", "-", "-",
-         "-", "-", "X", "-",
+    "X", "O", "X", "-",
+         "-", "-", "-", "-",
+         "-", "-", "-", "-",
          "-", "-", "-", "-"
 ]
 
@@ -41,28 +41,6 @@ def show_board():
           " | " + board[14] + " | " + board[15])
 
 # needs board, current player, no of moves
-
-
-def play_game():
-    global moves_made
-    show_board()
-
-    while game_is_still_on:
-        handle_turn(current_player)
-
-        # check if game is over after 7 moves
-        if moves_made >= 7:
-            check_if_game_over()
-
-        # give the other player a chance
-        flip_player()
-        moves_made += 1
-
-    # game is over
-    if winner == "X" or winner == "O":
-        print(winner + " won!")
-    elif winner == None:
-        print("Draw...")
 
 
 def check_if_game_over():
@@ -182,24 +160,33 @@ def flip_player():
 
 
 def handle_turn(player):
+    global board
 
-    print(player + "'s turn.")
-    position = input("Choose a number from 1-16: ")
-    valid_move = False
+    if player == "X":
+        print(player + "'s turn.")
+        position = input("Choose a number from 1-16: ")
+        valid_move = False
 
-    while not valid_move:
+        while not valid_move:
 
-        while position not in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16"]:
-            position = input("Invalid input. Choose a number from 1-16: ")
+            while position not in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16"]:
+                position = input("Invalid input. Choose a number from 1-16: ")
 
-        position = int(position) - 1
+            position = int(position) - 1
 
-        if board[position] == "-":
-            valid_move = True
-        else:
-            print("You can't play there. Go again.")
+            if board[position] == "-":
+                valid_move = True
+            else:
+                print("You can't play there. Go again.")
 
-    board[position] = player
+        board[position] = player
+
+    elif player == "O":
+        print(player + "'s turn.")
+
+        position = find_best_move(board)
+        board[position] = player
+
     show_board()
 
 
@@ -241,8 +228,8 @@ def minimax(board, depth, is_max):
     if score == -10:
         return score
     # Tie
-    if score == 0:
-        return score
+    if is_moves_left(board) == False:
+        return 0
 
     if is_max:
         best = MIN
@@ -276,6 +263,31 @@ def is_moves_left(board):
     return False
 
 
+def play_game():
+    global moves_made
+    show_board()
+
+    while game_is_still_on:
+        handle_turn(current_player)
+
+        # check if game is over after 7 moves
+        if moves_made >= 7:
+            check_if_game_over()
+
+        # give the other player a chance
+        flip_player()
+        moves_made += 1
+
+    # game is over
+    if winner == "X" or winner == "O":
+        print(winner + " won!")
+    elif winner == None:
+        print("Draw...")
+
+
 # print(evaluate(test_board))
-print("Best Move: ", find_best_move(test_board))
-# play_game()
+# print("Best Move: ", find_best_move(test_board))
+play_game()
+
+# TODO ai calls a tie when there isn't any
+# debug step by step
