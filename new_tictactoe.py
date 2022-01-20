@@ -1,6 +1,7 @@
+from random import randrange
 from shutil import move
 from traceback import print_tb
-import numpy as np
+import time
 
 # --- Global Variables ---
 game_is_still_on = True
@@ -31,9 +32,24 @@ test_board = [
          "-", "-", "-", "-",
          "-", "-", "-", "-"
 ]
+test_board2 = [
+    "X", "O", "-", "-",
+         "-", "-", "-", "-",
+         "-", "X", "-", "-",
+         "-", "-", "-", "-"
+]
+test_board3 = [
+    "X", "O", "O", "-",
+         "X", "-", "-", "-",
+         "X", "", "-", "-",
+         "-", "-", "-", "-"
+]
 
 
 def show_board():
+    """
+    Displays the board in a 4x4 grid
+    """
     print(board[0] + " | " + board[1] + " | " + board[2] + " | " + board[3])
     print(board[4] + " | " + board[5] + " | " + board[6] + " | " + board[7])
     print(board[8] + " | " + board[9] + " | " + board[10] + " | " + board[11])
@@ -42,13 +58,24 @@ def show_board():
 
 # needs board, current player, no of moves
 
+# ! add board parameter
+
 
 def check_if_game_over():
+    """
+    Checks if a player has won\n
+    or\n
+    If the game is a tie
+    """
     check_win(board)
     check_tie(board)
 
 
-def check_win(board):
+def check_win(board) -> str:
+    """
+    Checks win across rows, columns and diagonals.\n
+    Returns the player that won: X or O
+    """
     # set global variables
     global winner
 
@@ -77,7 +104,11 @@ def check_win(board):
         return winner
 
 
-def check_rows(board):
+def check_rows(board) -> str:
+    """
+    Checks if the game has been won on a row\n
+    Returns the opponent that won
+    """
     global game_is_still_on
 
     # check if any rows sum up to a winning value
@@ -100,7 +131,11 @@ def check_rows(board):
         return board[12]
 
 
-def check_columns(board):
+def check_columns(board) -> str:
+    """
+    Checks if the game has been won on a column\n
+    Returns the opponent that won
+    """
     global game_is_still_on
 
     # check if any columns sum up to a winning value
@@ -123,7 +158,11 @@ def check_columns(board):
         return board[3]
 
 
-def check_diagonals(board):
+def check_diagonals(board) -> str:
+    """
+    Checks if the game has been won on a diagonal\n
+    Returns the opponent that won
+    """
     global game_is_still_on
 
     # check if any diagonals sum up to a winning value
@@ -140,7 +179,11 @@ def check_diagonals(board):
         return board[3]
 
 
-def check_tie(board):
+def check_tie(board) -> str:
+    """
+    Checks if the game ended as a draw\n
+    Changes the game_is_still_on variable and ends the game
+    """
     global game_is_still_on
 
     if "-" not in board:
@@ -149,14 +192,16 @@ def check_tie(board):
 
 
 def flip_player():
-    # switches players after a turn
+    '''
+    Switches players after a turn
+    '''
+
     global current_player
 
     if current_player == "X":
         current_player = "O"
     elif current_player == "O":
         current_player = "X"
-    return
 
 
 def handle_turn(player):
@@ -167,13 +212,17 @@ def handle_turn(player):
         position = input("Choose a number from 1-16: ")
         valid_move = False
 
+        # prevents one player from over-writing his opponent's move
         while not valid_move:
 
+            # limits selection to the grid
             while position not in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16"]:
                 position = input("Invalid input. Choose a number from 1-16: ")
 
+            # index is 0-15, not 1-16
             position = int(position) - 1
 
+            # one can only play in an empty spot
             if board[position] == "-":
                 valid_move = True
             else:
@@ -184,6 +233,7 @@ def handle_turn(player):
     elif player == "O":
         print(player + "'s turn.")
 
+        # plays the best move for the board state
         position = find_best_move(board)
         board[position] = player
 
@@ -195,11 +245,15 @@ def evaluate(board):
         return 10
     if check_win(board) == "O":
         return -10
-    if check_win(board) == None:
-        return 0
+    return 0
 
 
 def find_best_move(board):
+    """
+    Returns the best move for a board state\n
+    Only returns best move for O
+    """
+    start = time.time()
     best = MIN
     best_move = -1
 
@@ -207,7 +261,7 @@ def find_best_move(board):
         if board[i] == "-":
             board[i] = "X"
 
-            move_val = minimax(board, 0, False)
+            move_val = minimax(board, 0, False, MIN, MAX)
 
             board[i] = "-"
 
@@ -215,10 +269,23 @@ def find_best_move(board):
                 best_move = i
                 best = move_val
 
+    print(time.time()-start)
     return best_move
 
 
-def minimax(board, depth, is_max):
+def is_moves_left(board):
+    """
+    Checks if there are spaces left to play in the board\n
+    Returns True if there are spaces\n
+    Returns False otherwise
+    """
+    for i in range(16):
+        if board[i] == "-":
+            return True
+    return False
+
+
+def minimax(board, depth, is_max, alpha, beta):
     score = evaluate(board)
 
     # X wins
@@ -238,9 +305,13 @@ def minimax(board, depth, is_max):
             if board[i] == "-":
                 board[i] = "X"
 
-                best = max(best, minimax(board, depth + 1, not is_max))
+                best = max(best, minimax(
+                    board, depth + 1, not is_max, alpha, beta))
+                alpha = max(alpha, best)
 
                 board[i] = "-"
+                if beta <= alpha:
+                    break
         return best
     else:
         best = MAX
@@ -250,17 +321,14 @@ def minimax(board, depth, is_max):
             if board[i] == "-":
                 board[i] = "O"
 
-                best = min(best, minimax(board, depth+1, not is_max))
+                best = min(best, minimax(
+                    board, depth+1, not is_max, alpha, beta))
+                beta = min(beta, best)
 
                 board[i] = "-"
+                if beta <= alpha:
+                    break
         return best
-
-
-def is_moves_left(board):
-    for i in range(16):
-        if board[i] == "-":
-            return True
-    return False
 
 
 def play_game():
@@ -287,7 +355,12 @@ def play_game():
 
 # print(evaluate(test_board))
 # print("Best Move: ", find_best_move(test_board))
+# print("Best Move: ", find_best_move(test_board2))
+# print("Best Move: ", find_best_move(test_board3))
 play_game()
 
 # TODO ai calls a tie when there isn't any
+# optimise minimax algorithm
 # debug step by step
+# maybe don't use a global variable for winner
+# check online 4x4 for optimal behaviour
