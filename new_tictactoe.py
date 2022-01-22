@@ -23,26 +23,6 @@ board = [
          "-", "-", "-", "-"
 ]
 
-# board for testing evaluation functions
-test_board = [
-    "X", "O", "X", "-",
-         "-", "-", "-", "-",
-         "-", "-", "-", "-",
-         "-", "-", "-", "-"
-]
-test_board2 = [
-    "X", "O", "-", "-",
-         "-", "-", "-", "-",
-         "-", "X", "-", "-",
-         "-", "-", "-", "-"
-]
-test_board3 = [
-    "X", "O", "O", "-",
-         "X", "-", "-", "-",
-         "X", "", "-", "-",
-         "-", "-", "-", "-"
-]
-
 
 def show_board():
     """
@@ -75,7 +55,6 @@ def check_win(board) -> str:
     Returns the player that won: X or O
     """
     # set global variables
-    # ! prevent it changing the global variable
     global winner
 
     # check_rows()
@@ -109,7 +88,6 @@ def evaluate_win(board) -> str:
     Returns the player that won: X or O
     """
     # set global variables
-    # ! prevent it changing the global variable
     global winner
 
     # check_rows()
@@ -313,7 +291,7 @@ def handle_turn(player):
 
         # prevents one player from over-writing his opponent's move
         while not valid_move:
-
+            
             # limits selection to the grid
             while position not in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16"]:
                 position = input("Invalid input. Choose a number from 1-16: ")
@@ -327,9 +305,6 @@ def handle_turn(player):
                 board[position] = player # easiest bug fix of my life
             else:
                 print("You can't play there. Go again.")
-
-            
-
     elif player == "O":
         print(player + "'s turn.")
 
@@ -481,14 +456,4 @@ def play_game():
         print("Draw...")
 
 
-# print(evaluate(test_board))
-# print("Best Move: ", find_best_move(test_board))
-# print("Best Move: ", find_best_move(test_board2))
-# print("Best Move: ", find_best_move(test_board3))
 play_game()
-
-# TODO ai calls a tie when there isn't any
-# optimise minimax algorithm
-# debug step by step
-# maybe don't use a global variable for winner
-# check online 4x4 for optimal behaviour
