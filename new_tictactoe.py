@@ -1,6 +1,4 @@
 from random import randrange
-from shutil import move
-from traceback import print_tb
 import time
 
 # --- Global Variables ---
@@ -56,10 +54,6 @@ def show_board():
     print(board[12] + " | " + board[13] +
           " | " + board[14] + " | " + board[15])
 
-# needs board, current player, no of moves
-
-# ! add board parameter
-
 
 def check_if_game_over():
     """
@@ -70,6 +64,10 @@ def check_if_game_over():
     check_win(board)
     check_tie(board)
 
+# Please forgive me for the check_ and evaluate_ functions
+# I was way too tired to think of a better way to do this
+# it's a bit of a mess but it works
+# I'm sorry
 
 def check_win(board) -> str:
     """
@@ -77,6 +75,7 @@ def check_win(board) -> str:
     Returns the player that won: X or O
     """
     # set global variables
+    # ! prevent it changing the global variable
     global winner
 
     # check_rows()
@@ -87,6 +86,40 @@ def check_win(board) -> str:
 
     # check_diagonals()
     diagonals_winner = check_diagonals(board)
+
+    if row_winner:
+        winner = row_winner
+        return winner
+
+    elif column_winner:
+        winner = column_winner
+        return winner
+
+    elif diagonals_winner:
+        winner = diagonals_winner
+        return winner
+    else:
+        winner = None
+        return winner
+
+
+def evaluate_win(board) -> str:
+    """
+    Checks win across rows, columns and diagonals.\n
+    Returns the player that won: X or O
+    """
+    # set global variables
+    # ! prevent it changing the global variable
+    global winner
+
+    # check_rows()
+    row_winner = evaluate_rows(board)
+
+    # check_columns()
+    column_winner = evaluate_columns(board)
+
+    # check_diagonals()
+    diagonals_winner = evaluate_diagonals(board)
 
     if row_winner:
         winner = row_winner
@@ -131,6 +164,30 @@ def check_rows(board) -> str:
         return board[12]
 
 
+def evaluate_rows(board) -> str:
+    """
+    Checks if the game has been won on a row\n
+    Returns the opponent that won
+    """
+    global game_is_still_on
+
+    # check if any rows sum up to a winning value
+    row_1 = board[0] == board[1] == board[2] == board[3] != "-"
+    row_2 = board[4] == board[5] == board[6] == board[7] != "-"
+    row_3 = board[8] == board[9] == board[10] == board[11] != "-"
+    row_4 = board[12] == board[13] == board[14] == board[15] != "-"
+
+    # returns the winner
+    if row_1:
+        return board[0]
+    elif row_2:
+        return board[4]
+    elif row_3:
+        return board[8]
+    elif row_4:
+        return board[12]
+
+
 def check_columns(board) -> str:
     """
     Checks if the game has been won on a column\n
@@ -158,6 +215,30 @@ def check_columns(board) -> str:
         return board[3]
 
 
+def evaluate_columns(board) -> str:
+    """
+    Checks if the game has been won on a column\n
+    Returns the opponent that won
+    """
+    global game_is_still_on
+
+    # check if any columns sum up to a winning value
+    column_1 = board[0] == board[4] == board[8] == board[12] != "-"
+    column_2 = board[1] == board[5] == board[9] == board[13] != "-"
+    column_3 = board[2] == board[6] == board[10] == board[14] != "-"
+    column_4 = board[3] == board[7] == board[11] == board[15] != "-"
+
+    # returns the winner
+    if column_1:
+        return board[0]
+    elif column_2:
+        return board[1]
+    elif column_3:
+        return board[2]
+    elif column_4:
+        return board[3]
+
+
 def check_diagonals(board) -> str:
     """
     Checks if the game has been won on a diagonal\n
@@ -171,6 +252,24 @@ def check_diagonals(board) -> str:
 
     if diagonal_1 or diagonal_2:
         game_is_still_on = False
+
+    # returns the winner
+    if diagonal_1:
+        return board[0]
+    elif diagonal_2:
+        return board[3]
+
+
+def evaluate_diagonals(board) -> str:
+    """
+    Checks if the game has been won on a diagonal\n
+    Returns the opponent that won
+    """
+    global game_is_still_on
+
+    # check if any diagonals sum up to a winning value
+    diagonal_1 = board[0] == board[5] == board[10] == board[15] != "-"
+    diagonal_2 = board[3] == board[6] == board[9] == board[12] != "-"
 
     # returns the winner
     if diagonal_1:
@@ -225,25 +324,50 @@ def handle_turn(player):
             # one can only play in an empty spot
             if board[position] == "-":
                 valid_move = True
+                board[position] = player # easiest bug fix of my life
             else:
                 print("You can't play there. Go again.")
 
-        board[position] = player
+            
 
     elif player == "O":
         print(player + "'s turn.")
 
-        # plays the best move for the board state
-        position = find_best_move(board)
+        if moves_made >= 5:  # it takes 5 moves to set up a win
+            # plays the best move for the board state
+            position = find_best_move(board)
+        else:
+            position = return_random_move(board)
         board[position] = player
 
     show_board()
 
 
+def return_random_move(board):
+    """
+    Picks a random move from the board
+    """
+    valid_move = False
+
+    while not valid_move:
+        # index of board is 0-15
+        position = randrange(0, 15)
+
+        if board[position] == "-":
+            valid_move = True
+        else:
+            position = randrange(0, 15)
+
+    return position
+
+
 def evaluate(board):
-    if check_win(board) == "X":
+    """
+    Evaluates the board state and returns the score
+    """
+    if evaluate_win(board) == "X":
         return 10
-    if check_win(board) == "O":
+    if evaluate_win(board) == "O":
         return -10
     return 0
 
@@ -286,6 +410,10 @@ def is_moves_left(board):
 
 
 def minimax(board, depth, is_max, alpha, beta):
+    """
+    Returns the best move for a board state\n
+    Only returns best move for O
+    """
     score = evaluate(board)
 
     # X wins
