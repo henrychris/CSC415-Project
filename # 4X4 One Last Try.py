@@ -1,5 +1,3 @@
-# 4X4 One Last Try
-
 # --- Global Variables ---
 from random import randrange
 
