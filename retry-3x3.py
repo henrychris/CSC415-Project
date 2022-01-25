@@ -210,18 +210,6 @@ def evaluate(board):
     """
     Evaluates the board state and returns the score
     """
-    # if check_rows(board, True) == "X":
-    #     return -10
-    # if check_rows(board, True) == "O":
-    #     return 10
-    # if check_columns(board, True) == "X":
-    #     return -10
-    # if check_columns(board, True) == "O":
-    #     return 10
-    # if check_diagonals(board, True) == "X":
-    #     return -10
-    # if check_diagonals(board, True) == "O":
-    #     return 10
     if check_win(board, True) == "X":
         return -10
     if check_win(board, True) == "O":
