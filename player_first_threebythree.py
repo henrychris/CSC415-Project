@@ -246,8 +246,8 @@ def find_best_move(board):
                 bestMove = i
                 bestVal = moveVal
 
-    print("The value of the best Move is :", bestVal)
-    print(bestMove)
+    # print("The value of the best Move is :", bestVal)
+    # print(bestMove)
     return bestMove
 
     
@@ -352,10 +352,10 @@ def play_game(board):
 
     # game is over
     if winner == "X" or winner == "O":
-        print(winner + " won!")
+        print(winner + " won!\n")
     elif winner == None:
-        print("Draw...")
+        print("Draw...\n")
 
 
 # show_board(board)
-play_game(board)
+# play_game(board)
