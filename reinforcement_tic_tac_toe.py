@@ -12,8 +12,6 @@ p1_states = []
 lr = 0.2
 decay_gamma = 0.9
 exp_rate = 0.3
-p1_reward = 0
-p2_reward = 0
 
 # --- Constants ---
 PLAYER, AI = 'X', 'O'
@@ -345,11 +343,11 @@ def find_available_positions(board):
 
 def give_reward(winner):
     if winner == 'X':
-        feed_reward(1, p1_states, p1_states_value)
-    elif winner == 'O':
         feed_reward(0, p1_states, p1_states_value)
+    elif winner == 'O':
+        feed_reward(1, p1_states, p1_states_value)
     else:
-        feed_reward(0.1, p1_states, p1_states_value)
+        feed_reward(0.5, p1_states, p1_states_value)
 
 def isMovesLeft(board):
 
@@ -387,12 +385,13 @@ def play_game(board):
     while game_is_still_on:
         # handle_turn(current_player, board)
         if current_player == PLAYER:
+            position = find_best_move(board)
+            board[position] = current_player
+            # add_state(p1_states, board_hash(board))
+        else:
             position = choose_action(board, find_available_positions(board), exp_rate, current_player, p1_states_value)
             board[position] = current_player
             add_state(p1_states, board_hash(board))
-        else:
-            position = find_best_move(board)
-            board[position] = current_player
         moves_made += 1
         # check if game is over after 7 moves
         if moves_made >= 5:
@@ -476,7 +475,7 @@ def reset():
     p1_states.clear()
 
 # show_board(board)
-for i in range(100):
+for i in range(20):
     play_game(board)
 print(str(p1_states_value))
 play_game_2(board)
