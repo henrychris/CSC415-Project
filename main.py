@@ -31,7 +31,9 @@ def main():
             pl_f.play_game(pl_f.board)
         elif player_choice == "3":
             fbf.play_game(fbf.board)
-        elif player_choice == ("Q" or "q"):
+        elif player_choice == ("Q"):
+            game_still_on = False
+        elif player_choice == ("q"):
             game_still_on = False
 
 
