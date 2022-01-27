@@ -1,7 +1,6 @@
+# AI GOES FIRST
+
 # --- Global Variables ---
-from random import randrange
-
-
 game_is_still_on = True
 moves_made = 0
 
@@ -17,22 +16,19 @@ MIN = -1000
 current_player = PLAYER
 
 board = [
-         "-", "-", "-", "-",
-         "-", "-", "-", "-",
-         "-", "-", "-", "-",
-         "-", "-", "-", "-"
+    "-", "-", "-",
+    "-", "-", "-",
+    "-", "-", "-"
 ]
 
 
 def show_board(board):
     """
-    Displays the board in a 4x4 grid
+    Displays the board in a 3x3 grid
     """
-    print(board[0] + " | " + board[1] + " | " + board[2] + " | " + board[3])
-    print(board[4] + " | " + board[5] + " | " + board[6] + " | " + board[7])
-    print(board[8] + " | " + board[9] + " | " + board[10] + " | " + board[11])
-    print(board[12] + " | " + board[13] +
-          " | " + board[14] + " | " + board[15])
+    print(board[0] + " | " + board[1] + " | " + board[2])
+    print(board[3] + " | " + board[4] + " | " + board[5])
+    print(board[6] + " | " + board[7] + " | " + board[8])
 
 
 def check_if_game_over(board, is_evaluating):
@@ -76,7 +72,7 @@ def check_win(board, is_evaluating) -> str:
         return winner
 
 
-def check_rows(board, is_evaluating) -> str:
+def check_rows(board, is_evaluating):
     """
     Checks if the game has been won on a row\n
     Returns the opponent that won
@@ -84,26 +80,24 @@ def check_rows(board, is_evaluating) -> str:
     global game_is_still_on
 
     # check if any rows sum up to a winning value
-    row_1 = board[0] == board[1] == board[2] == board[3] != "-"
-    row_2 = board[4] == board[5] == board[6] == board[7] != "-"
-    row_3 = board[8] == board[9] == board[10] == board[11] != "-"
-    row_4 = board[12] == board[13] == board[14] == board[15] != "-"
+    row_1 = board[0] == board[1] == board[2] != "-"
+    row_2 = board[3] == board[4] == board[5] != "-"
+    row_3 = board[6] == board[7] == board[8] != "-"
 
-    if (row_1 or row_2 or row_3 or row_4) and (is_evaluating == False):
+    if (row_1 or row_2 or row_3) and (is_evaluating == False):
+        # is_evaluating should prevent the game from ending early
         game_is_still_on = False
 
     # returns the winner
     if row_1:
         return board[0]
     elif row_2:
-        return board[4]
+        return board[3]
     elif row_3:
-        return board[8]
-    elif row_4:
-        return board[12]
+        return board[6]
 
 
-def check_columns(board, is_evaluating) -> str:
+def check_columns(board, is_evaluating):
     """
     Checks if the game has been won on a column\n
     Returns the opponent that won
@@ -111,12 +105,11 @@ def check_columns(board, is_evaluating) -> str:
     global game_is_still_on
 
     # check if any columns sum up to a winning value
-    column_1 = board[0] == board[4] == board[8] == board[12] != "-"
-    column_2 = board[1] == board[5] == board[9] == board[13] != "-"
-    column_3 = board[2] == board[6] == board[10] == board[14] != "-"
-    column_4 = board[3] == board[7] == board[11] == board[15] != "-"
+    column_1 = board[0] == board[3] == board[6] != "-"
+    column_2 = board[1] == board[4] == board[7] != "-"
+    column_3 = board[2] == board[5] == board[8] != "-"
 
-    if(column_1 or column_2 or column_3 or column_4) and (is_evaluating == False):
+    if (column_1 or column_2 or column_3) and (is_evaluating == False):
         game_is_still_on = False
 
     # returns the winner
@@ -126,8 +119,6 @@ def check_columns(board, is_evaluating) -> str:
         return board[1]
     elif column_3:
         return board[2]
-    elif column_4:
-        return board[3]
 
 
 def check_diagonals(board, is_evaluating) -> str:
@@ -138,8 +129,8 @@ def check_diagonals(board, is_evaluating) -> str:
     global game_is_still_on
 
     # check if any diagonals sum up to a winning value
-    diagonal_1 = board[0] == board[5] == board[10] == board[15] != "-"
-    diagonal_2 = board[3] == board[6] == board[9] == board[12] != "-"
+    diagonal_1 = board[0] == board[4] == board[8] != "-"
+    diagonal_2 = board[2] == board[4] == board[6] != "-"
 
     if (diagonal_1 or diagonal_2) and (is_evaluating == False):
         game_is_still_on = False
@@ -148,7 +139,7 @@ def check_diagonals(board, is_evaluating) -> str:
     if diagonal_1:
         return board[0]
     elif diagonal_2:
-        return board[3]
+        return board[2]
 
 
 def check_tie(board):
@@ -176,19 +167,19 @@ def flip_player():
 
 
 def handle_turn(player, board):
-    if player == "X":
+    if player == AI:
         print(player + "'s turn.")
-        position = input("Choose a number from 1-16: ")
+        position = input("Choose a number from 1-9: ")
         valid_move = False
 
         # prevents one player from over-writing his opponent's move
         while not valid_move:
 
             # limits selection to the grid
-            while position not in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16"]:
-                position = input("Invalid input. Choose a number from 1-16: ")
+            while position not in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
+                position = input("Invalid input. Choose a number from 1-9: ")
 
-            # index is 0-15, not 1-16
+            # index is 0-9
             position = int(position) - 1
 
             # one can only play in an empty spot
@@ -198,87 +189,40 @@ def handle_turn(player, board):
             else:
                 print("You can't play there. Go again.")
 
-    elif player == "O":
+    elif player == PLAYER:
         print(player + "'s turn.")
 
-        if moves_made >= 5:  # it takes 5 moves to set up a win
-            # plays the best move for the board state
-            position = find_best_move(board)
-        else:
-            position = return_random_move(board)
+        position = find_best_move(board)
         board[position] = player
 
     show_board(board)
 
 
 def isMovesLeft(board):
-    for i in range(16):
+
+    for i in range(9):
         if (board[i] == '-'):
             return True
     return False
-
-
-def return_random_move(board):
-    """
-    Picks a random move from the board
-    """
-    valid_move = False
-
-    while not valid_move:
-        # index of board is 0-15
-        position = randrange(0, 15)
-
-        if board[position] == "-":
-            valid_move = True
-        else:
-            position = randrange(0, 15)
-
-    return position
 
 
 def evaluate(board):
     """
     Evaluates the board state and returns the score
     """
-    if check_win(board, True) == "X":
-        return -10
-    if check_win(board, True) == "O":
+    if check_rows(board, True) == "X":
         return 10
-    return 0   
-
-
-def find_best_move(board):
-    bestVal = MIN
-    bestMove = -1
-
-    # Traverse all cells, evaluate minimax function for
-    # all empty cells. And return the cell with optimal
-    # value.
-    for i in range(16):
-
-        # Check if cell is empty
-        if (board[i] == '-'):
-
-            # Make the move
-            board[i] = AI
-
-            # compute evaluation function for this
-            # move.
-            moveVal = minimax(board, 0, False, MIN, MAX)
-
-            # Undo the move
-            board[i] = '-'
-
-            # If the value of the current move is
-            # more than the best value, then update
-            # best/
-            if (moveVal > bestVal):
-                bestMove = i
-                bestVal = moveVal
-
-    print("The value of the best Move is :", bestVal)
-    print(bestMove)
-    return bestMove
+    if check_rows(board, True) == "O":
+        return -10
+    if check_columns(board, True) == "X":
+        return 10
+    if check_columns(board, True) == "O":
+        return -10
+    if check_diagonals(board, True) == "X":
+        return 10
+    if check_diagonals(board, True) == "O":
+        return -10
+    return 0
 
 
 def minimax(board, depth, is_max, alpha, beta):
@@ -306,12 +250,12 @@ def minimax(board, depth, is_max, alpha, beta):
         best = MIN
 
         # Traverse all cells
-        for i in range(16):
+        for i in range(9):
             # Check if cell is empty
             if (board[i] == '-'):
 
                 # Make the move
-                board[i] = AI
+                board[i] = PLAYER
 
                 # Call minimax recursively and choose
                 # the maximum value
@@ -336,13 +280,13 @@ def minimax(board, depth, is_max, alpha, beta):
         best = MAX
 
         # Traverse all cells
-        for i in range(16):
+        for i in range(9):
 
             # Check if cell is empty
             if (board[i] == '-'):
 
                 # Make the move
-                board[i] = PLAYER
+                board[i] = AI
 
                 # Call minimax recursively and choose
                 # the minimum value
@@ -361,8 +305,44 @@ def minimax(board, depth, is_max, alpha, beta):
         return best
 
 
+def find_best_move(board):
+    bestVal = MIN
+    bestMove = -1
+
+    # Traverse all cells, evaluate minimax function for
+    # all empty cells. And return the cell with optimal
+    # value.
+    for i in range(9):
+
+        # Check if cell is empty
+        if (board[i] == '-'):
+
+            # Make the move
+            board[i] = PLAYER
+
+            # compute evaluation function for this
+            # move.
+            moveVal = minimax(board, 0, False, MIN, MAX)
+
+            # Undo the move
+            board[i] = '-'
+
+            # If the value of the current move is
+            # more than the best value, then update
+            # best/
+            if (moveVal > bestVal):
+                bestMove = i
+                bestVal = moveVal
+
+    # print("The value of the best Move is :", bestVal)
+    # print(bestMove)
+    return bestMove
+
+
 def play_game(board):
     global moves_made
+    global game_is_still_on
+
     show_board(board)
 
     while game_is_still_on:
@@ -370,7 +350,7 @@ def play_game(board):
         moves_made += 1
 
         # check if game is over after 7 moves
-        if moves_made >= 7:
+        if moves_made >= 5:
             check_if_game_over(board, False)
 
         # give the other player a chance
@@ -380,9 +360,15 @@ def play_game(board):
 
     # game is over
     if winner == "X" or winner == "O":
-        print(winner + " won!")
+        print(winner + " won!\n")
     elif winner == None:
-        print("Draw...")
+        print("Draw...\n")
 
 
-play_game(board)
+# show_board(board)
+# play_game(board)
+
+# In some cases, rather than winning the game- the AI toys with the player
+# to test this:
+# Play AI_first 3x3
+# play in position 2 and 3. The AI should win in column one, but instead plays center
