@@ -226,12 +226,12 @@ def return_random_move(board):
 
     while not valid_move:
         # index of board is 0-15
-        position = randrange(0, 15)
+        position = randrange(0, 16)
 
         if board[position] == "-":
             valid_move = True
         else:
-            position = randrange(0, 15)
+            position = randrange(0, 16)
 
     return position
 
