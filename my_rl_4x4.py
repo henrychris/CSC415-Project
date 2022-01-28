@@ -281,22 +281,24 @@ class HumanPlayer:
         pass
 
 
-if __name__ == "__main__":
+def play_game():
     # training
     # p1 = Player("p4x4")
     # p2 = AI_minimax()
 
     # st = State(p1, p2)
     # print("training... 4x4")
-    # st.train(50000)
+    # st.train(100000)
 
     # p1.savePolicy()
 
     # play with human
-    p1 = Player("computer", exp_rate=0)
+    p1 = Player("computer", exp_rate=0.1)
     p1.loadPolicy("policy_p4x4")
 
     p2 = HumanPlayer("human")
 
     st = State(p1, p2)
     st.play2()
+
+play_game()
