@@ -22,6 +22,21 @@ board = [
 ]
 
 
+class Memoize_tree:
+    def __init__(self, fn):
+        self.fn = fn
+        self.memo = {}                                      # Create our empty memo buffer
+
+    def __call__(self, *args):
+        self.memo.clear()
+        # Note we skip the first argument, this is the tree that is always the same. Adding this would slow down the hashing procedure
+        function_call_hash = args[1:]
+        if function_call_hash not in self.memo:             # Check if the function has been called before
+            # Store the result of the function call
+            self.memo[function_call_hash] = self.fn(*args)
+        return self.memo[function_call_hash]
+
+
 def show_board(board):
     """
     Displays the board in a 3x3 grid
@@ -225,6 +240,7 @@ def evaluate(board):
     return 0
 
 
+@Memoize_tree
 def minimax(board, depth, is_max, alpha, beta):
     score = evaluate(board)
 
