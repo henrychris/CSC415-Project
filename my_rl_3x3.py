@@ -270,7 +270,7 @@ class HumanPlayer:
         pass
 
 
-if __name__ == "__main__":
+def play_game():
     # training
     p1 = Player("p1")
     p2 = AI_minimax()
