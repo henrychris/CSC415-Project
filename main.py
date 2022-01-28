@@ -3,12 +3,16 @@ from importlib import reload
 import fourbyfour as fbf
 import ai_first_threebythree as ai_f
 import player_first_threebythree as pl_f
+import my_rl_3x3 as rl_3
+import my_rl_4x4 as rl_4
 
 
 menu = """
        1. 3x3 - AI plays first
        2. 3x3 - Player plays first
        3. 4x4
+       4. 3x3 - Reinforcement learning
+       5. 4x4 - Reinforcement learnig
        Q. Quit
        """
 
@@ -23,7 +27,7 @@ def main():
 
         # Before the game starts, all the variables are set to the preferred inital values
 
-        while player_choice not in ["1", "2", "3", "Q", "q"]:
+        while player_choice not in ["1", "2", "3", "4", "5", "Q", "q"]:
             player_choice = input("Pick a valid option")
 
         if player_choice == "1":
@@ -73,6 +77,10 @@ def main():
             ]
 
             fbf.play_game(fbf.board)
+        elif player_choice == "4":
+            rl_3.play_game()
+        elif player_choice == "5":
+            rl_4.play_game()
         elif player_choice == ("Q"):
             game_still_on = False
         elif player_choice == ("q"):
