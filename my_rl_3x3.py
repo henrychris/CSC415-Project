@@ -147,6 +147,8 @@ class State:
             # take action and upate board state
             self.updateState(p1_action)
             self.showBoard()
+            print()
+
             # check board status if it is end
             win = self.winner()
             if win is not None:
@@ -164,6 +166,7 @@ class State:
 
                 self.updateState(p2_action)
                 self.showBoard()
+                print()
                 win = self.winner()
                 if win is not None:
                     if win == -1:
@@ -272,12 +275,12 @@ class HumanPlayer:
 
 def play_game():
     # training
-    p1 = Player("p1")
-    p2 = AI_minimax()
+    # p1 = Player("p1")
+    # p2 = AI_minimax()
 
     # st = State(p1, p2)
     # print("training...")
-    # st.train(50000)
+    # st.train(100000)
 
     # p1.savePolicy()
 
@@ -290,4 +293,5 @@ def play_game():
     st = State(p1, p2)
     st.play2()
 
+play_game()
 # WORKS!

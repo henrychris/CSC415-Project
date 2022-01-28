@@ -149,6 +149,8 @@ class State:
             # take action and upate board state
             self.updateState(p1_action)
             self.showBoard()
+            print()
+
             # check board status if it is end
             win = self.winner()
             if win is not None:
@@ -166,6 +168,7 @@ class State:
 
                 self.updateState(p2_action)
                 self.showBoard()
+                print()
                 win = self.winner()
                 if win is not None:
                     if win == -1:
@@ -301,4 +304,4 @@ def play_game():
     st = State(p1, p2)
     st.play2()
 
-play_game()
+# play_game()
